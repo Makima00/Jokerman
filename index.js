@@ -1,6 +1,6 @@
 'use strict';
 const BootBot = require('bootbot');
-require('dotenv')
+require('dotenv').config({ path: './.env' })
 
 const bot = new BootBot({
     accessToken: process.env.accessToken,
@@ -10,19 +10,17 @@ const bot = new BootBot({
 
 bot.on('message', (payload, chat) => {
     const text = payload.message.text;
-    chat.say(`Echo: ${text}`);
+
+    chat.say(`Vous avez ecris: "${text}"`);
 });
 
-bot.on('message', (payload, chat) => {
-    console.log('A text message was received!');
-});
-
-bot.on('attachment', (payload, chat) => {
-    console.log('An attachment was received!');
-});
-
-bot.on('postback:HELP_ME', (payload, chat) => {
-    console.log('The Help Me button was clicked!');
+// Meeting
+bot.hear(['Salut', 'Bonjour', 'hi', 'slt', /Kaiz (Kaiz)?/i], (payload, chat) => {
+    chat.getUserProfile().then((user) => {
+        chat.say(`Bonjour, ${user.first_name}!`).then(() => {
+            chat.say('Que puis-je faire pour toi?')
+        });
+    });
 });
 
 bot.start();
